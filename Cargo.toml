@@ -1,0 +1,12 @@
+[package]
+name = "eip1024-rs"
+version = "0.1.0"
+authors = ["hskang9 <hskang9@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+nacl_mini = { git = "https://github.com/hskang9/nacl-mini.git"}
+arrayref = "0.3.5"
+hex = "0.4.0"
