@@ -6,10 +6,38 @@
 use eip_1024::{get_encryption};
 
 fn main() {
+	let bob_sk = "mJxmrVq8pfeR80HMZBTkjV+RiND1lqPqLuCdDUiduis=";
+    let bob_sk_slice: [u8; 32] = crate::to_byte32(bob_sk.as_bytes());
+    let alice_sk = "Rz2i6pXUKcpWt6/b+mYtPPH+PiwhyLswOjcP8ZM0dyI=";
+    let alice_sk_slice: [u8; 32] = crate::to_byte32(alice_sk.as_bytes());
+    let alice = nacl_mini::crypto_box::gen_keypair_from_secret(&bob_sk_slice);
+    let bob = nacl_mini::crypto_box::gen_keypair_from_secret(&alice_sk_slice);
+    // Alice requests Bob's public encryption key so bob sends his encryption public key
+    let bob_encrypt_keypair = crate::get_encryption_keypair(*bob.secret());
+
+    // Alice generates a random ephemeralKeyPair 
+    let alice_ephemeral_keypair = nacl_mini::crypto_box::gen_keypair_from_secret(alice.secret());
+
+        
+    // Encrypt data first
+    let encrypted_data = crate::encrypt(b"Hello world", None, **bob_encrypt_keypair.public(), *alice_ephemeral_keypair.secret()).unwrap();
+        
+
+    // Bob generates his encryptionPrivateKey
+    let bob_encrypt_secret = bob_encrypt_keypair.secret(); 
+
+
+    // Bob passes his encryptionPrivateKey
+    // along with the encrypted blob 
+    // to nacl.box.open(ciphertext, nonce, ephemPublicKey, myEncryptionPrivatekey)
+    let decrypted = crate::decrypt(encrypted_data, *bob_encrypt_secret).unwrap();
+    
+    // Decrypted message
+    println!("{:?}", decrypted);
 	assert_eq!(
-		hash_structured_data(typed_data).unwrap().to_hex::<String>(),
-		"be609aee343fb3c4b28e1df9e632fca64fcfaede20f02e86244efddf30957bd2"
-	)
+		decrypted,
+		"Hello world"
+	);
 }
 
 ```
