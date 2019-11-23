@@ -5,12 +5,10 @@ extern crate hex;
 use std::str;
 use nacl_mini::{KeyPair,Public, Secret, Error};
 use nacl_mini::traits::FromUnsafeSlice;
-/// Returns user's public Encryption key derived from private Ethereum key
-/// receiver<&str> private key for the receiver of the message
-/// sender &str public key for the sender
-/// 
-/// returns
-pub fn getEncryptionPublicKey(receiver: &str) -> String {
+
+
+
+pub fn get_encryption_publickey(receiver: &str) -> String {
     let secret: [u8; 32] = to_array(receiver.as_bytes());
     let keypair = nacl_mini::crypto_box::gen_keypair_from_secret(&secret);
     return hex::encode(**keypair.public());
@@ -77,8 +75,8 @@ mod tests {
     use nacl_mini::crypto_box::*; 
 
     #[test]
-    fn getEncryptionPublicKey_works() {
-        let public = crate::getEncryptionPublicKey("mJxmrVq8pfeR80HMZBTkjV+RiND1lqPqLuCdDUiduis=");
+    fn get_encryption_publickey_works() {
+        let public = crate::get_encryption_publickey("mJxmrVq8pfeR80HMZBTkjV+RiND1lqPqLuCdDUiduis=");
         println!("Generated public: {}", public);
     }
 
