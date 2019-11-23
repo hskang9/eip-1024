@@ -33,7 +33,7 @@ pub fn encrypt(data: &[u8], version: Option<String>, send_pk: [u8; 32], ephermal
     };
     let nonce = nacl_mini::gen_nonce();
     let send_public = Public::from_unsafe_slice(&send_pk).unwrap();
-    // Generated another ephemeral keypair from the key
+    // Generate another ephemeral keypair from the key
     let ephemeral_keypair = nacl_mini::crypto_box::gen_keypair_from_secret(&ephermal_sk);
     let result = nacl_mini::crypto_box::seal(&data, &nonce, &send_public, ephemeral_keypair.clone().secret()).unwrap();
     let result_hex = hex::encode(&result);
