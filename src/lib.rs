@@ -8,7 +8,7 @@ use nacl_mini::traits::FromUnsafeSlice;
 
 const VERSION: &str =  "x25519-xsalsa20-poly1305";
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct EncryptedData {
     version: String,    
     nonce: String,
