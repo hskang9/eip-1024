@@ -4,19 +4,21 @@
 
 ```rust
 use eip_1024;
+use saltbabe::{KeyPair,Public, Secret, Error};
+use saltbabe::traits::FromUnsafeSlice;
 
 fn main() {
 	let bob_sk = "mJxmrVq8pfeR80HMZBTkjV+RiND1lqPqLuCdDUiduis=";
     let bob_sk_slice: [u8; 32] = eip_1024::to_byte32(bob_sk.as_bytes());
     let alice_sk = "Rz2i6pXUKcpWt6/b+mYtPPH+PiwhyLswOjcP8ZM0dyI=";
     let alice_sk_slice: [u8; 32] = eip_1024::to_byte32(alice_sk.as_bytes());
-    let alice = nacl_mini::crypto_box::gen_keypair_from_secret(&bob_sk_slice);
-    let bob = nacl_mini::crypto_box::gen_keypair_from_secret(&alice_sk_slice);
+    let alice = saltbabe::crypto_box::gen_keypair_from_secret(&bob_sk_slice);
+    let bob = saltbabe::crypto_box::gen_keypair_from_secret(&alice_sk_slice);
     // Alice requests Bob's public encryption key so bob sends his encryption public key
     let bob_encrypt_keypair = eip_1024::get_encryption_keypair(*bob.secret());
 
     // Alice generates a random ephemeralKeyPair 
-    let alice_ephemeral_keypair = nacl_mini::crypto_box::gen_keypair_from_secret(alice.secret());
+    let alice_ephemeral_keypair = saltbabe::crypto_box::gen_keypair_from_secret(alice.secret());
 
         
     // Encrypt data first

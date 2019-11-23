@@ -1,10 +1,10 @@
-extern crate nacl_mini;
+extern crate saltbabe;
 #[macro_use]
 extern crate arrayref;
 extern crate hex;
 use std::str;
-use nacl_mini::{KeyPair,Public, Secret, Error};
-use nacl_mini::traits::FromUnsafeSlice;
+pub use saltbabe::{KeyPair,Public, Secret, Error};
+pub use saltbabe::traits::FromUnsafeSlice;
 
 const VERSION: &str =  "x25519-xsalsa20-poly1305";
 
@@ -17,7 +17,7 @@ pub struct EncryptedData {
 }
 
 pub fn get_encryption_keypair(sk: [u8; 32]) -> KeyPair<Secret, Public> {
-    let keypair = nacl_mini::crypto_box::gen_keypair_from_secret(&sk);
+    let keypair = saltbabe::crypto_box::gen_keypair_from_secret(&sk);
     return keypair;
 }
 
@@ -31,11 +31,11 @@ pub fn encrypt(data: &[u8], version: Option<String>, send_pk: [u8; 32], ephermal
         Some(s) => s,
         None => VERSION.to_string()
     };
-    let nonce = nacl_mini::gen_nonce();
+    let nonce = saltbabe::gen_nonce();
     let send_public = Public::from_unsafe_slice(&send_pk).unwrap();
-    // Generate another ephemeral keypair from the key
-    let ephemeral_keypair = nacl_mini::crypto_box::gen_keypair_from_secret(&ephermal_sk);
-    let result = nacl_mini::crypto_box::seal(&data, &nonce, &send_public, ephemeral_keypair.clone().secret()).unwrap();
+    // Generate another ephemeral keypair from the key input
+    let ephemeral_keypair = saltbabe::crypto_box::gen_keypair_from_secret(&ephermal_sk);
+    let result = saltbabe::crypto_box::seal(&data, &nonce, &send_public, ephemeral_keypair.clone().secret()).unwrap();
     let result_hex = hex::encode(&result);
     let blob = EncryptedData {
         version: version,
@@ -56,7 +56,7 @@ pub fn decrypt(encrypted_data: EncryptedData, recv_sk: [u8; 32]) -> Result<Strin
     let nonce_bytes = hex::decode(encrypted_data.nonce).unwrap();
     let nonce = array_ref!(nonce_bytes, 0, 24).clone();
     println!("cipher_bytes: {:?}\n nonce: {:?}\n send_pk: {:?}\n recv_sk: {:?}\n", cipher_bytes, nonce, hex::encode(*send_pk), hex::encode(recv_sk.secret()) );
-    let result = nacl_mini::crypto_box::open(&cipher_bytes, &nonce, &send_pk, &recv_sk.secret()).unwrap();
+    let result = saltbabe::crypto_box::open(&cipher_bytes, &nonce, &send_pk, &recv_sk.secret()).unwrap();
     return Ok(str::from_utf8(&result.clone()).unwrap().to_string());
 }
 
@@ -70,7 +70,7 @@ pub fn gen_keypair() -> KeyPair<Secret, Public> {
 
 #[cfg(test)]
 mod tests {
-    extern crate nacl_mini;
+    extern crate saltbabe;
     extern crate hex;
  
 
@@ -89,14 +89,14 @@ mod tests {
         let bob_sk_slice: [u8; 32] = crate::to_byte32(bob_sk.as_bytes());
         let alice_sk = "Rz2i6pXUKcpWt6/b+mYtPPH+PiwhyLswOjcP8ZM0dyI=";
         let alice_sk_slice: [u8; 32] = crate::to_byte32(alice_sk.as_bytes());
-        let alice = nacl_mini::crypto_box::gen_keypair_from_secret(&bob_sk_slice);
-        let bob = nacl_mini::crypto_box::gen_keypair_from_secret(&alice_sk_slice);
+        let alice = saltbabe::crypto_box::gen_keypair_from_secret(&bob_sk_slice);
+        let bob = saltbabe::crypto_box::gen_keypair_from_secret(&alice_sk_slice);
         
         // Alice requests Bob's public encryption key so bob sends his encryption public key
         let bob_encrypt_pubkey = **crate::get_encryption_keypair(*bob.secret()).public();
 
         // Alice generates a random ephemeralKeyPair 
-        let alice_ephemeral_keypair = nacl_mini::crypto_box::gen_keypair_from_secret(alice.secret());
+        let alice_ephemeral_keypair = saltbabe::crypto_box::gen_keypair_from_secret(alice.secret());
 
         // Alice uses her ephemeralKeypair.secretKey and Bob's encryptionPublicKey to encrypt the data using nacl.box.
         let encrypted = crate::encrypt(b"Hello world", None, bob_encrypt_pubkey, *alice_ephemeral_keypair.secret());
@@ -111,13 +111,13 @@ mod tests {
         let bob_sk_slice: [u8; 32] = crate::to_byte32(bob_sk.as_bytes());
         let alice_sk = "Rz2i6pXUKcpWt6/b+mYtPPH+PiwhyLswOjcP8ZM0dyI=";
         let alice_sk_slice: [u8; 32] = crate::to_byte32(alice_sk.as_bytes());
-        let alice = nacl_mini::crypto_box::gen_keypair_from_secret(&bob_sk_slice);
-        let bob = nacl_mini::crypto_box::gen_keypair_from_secret(&alice_sk_slice);
+        let alice = saltbabe::crypto_box::gen_keypair_from_secret(&bob_sk_slice);
+        let bob = saltbabe::crypto_box::gen_keypair_from_secret(&alice_sk_slice);
         // Alice requests Bob's public encryption key so bob sends his encryption public key
         let bob_encrypt_keypair = crate::get_encryption_keypair(*bob.secret());
 
         // Alice generates a random ephemeralKeyPair 
-        let alice_ephemeral_keypair = nacl_mini::crypto_box::gen_keypair_from_secret(alice.secret());
+        let alice_ephemeral_keypair = saltbabe::crypto_box::gen_keypair_from_secret(alice.secret());
 
         
         // Encrypt data first

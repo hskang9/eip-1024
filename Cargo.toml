@@ -8,6 +8,6 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-nacl_mini = { git = "https://github.com/hskang9/nacl-mini.git"}
+saltbabe = "0.1.0"
 arrayref = "0.3.5"
 hex = "0.4.0"
