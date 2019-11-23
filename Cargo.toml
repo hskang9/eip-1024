@@ -2,6 +2,8 @@
 name = "eip1024-rs"
 version = "0.1.0"
 description = "EIP-1024 Rust implementation"
+license-file = "LICENSE"
+readme = "README"
 authors = ["hskang9 <hskang9@gmail.com>"]
 edition = "2018"
 
