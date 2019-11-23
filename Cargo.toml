@@ -1,5 +1,5 @@
 [package]
-name = "eip1024-rs"
+name = "eip_1024"
 version = "0.1.0"
 description = "EIP-1024 Rust implementation"
 license-file = "LICENSE"
