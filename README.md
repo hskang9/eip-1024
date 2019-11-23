@@ -1,4 +1,4 @@
-# EIP-1024 ![Crates.io](https://img.shields.io/crates/d/EIP-1024.svg) [![Released API docs](https://docs.rs/EIP-1024/badge.svg)](https://docs.rs/EIP-1024)
+# EIP-1024 ![Crates.io](https://img.shields.io/crates/d/eip_1024.svg) [![Released API docs](https://docs.rs/EIP-1024/badge.svg)](https://docs.rs/EIP-1024)
 
 ## Example
 
